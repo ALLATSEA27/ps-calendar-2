@@ -16,10 +16,15 @@ const App = () => {
     <Router>
       <Routes>
         <Route
-          path="/"
-          element={<Navigate to={`/${currentYear}/${currentMonth}`} replace />}
+          path="/ps-calendar-2"
+          element={
+            <Navigate
+              to={`/ps-calendar-2/${currentYear}/${currentMonth}`}
+              replace
+            />
+          }
         />
-        <Route path="/:year/:month" element={<Calendar />} />
+        <Route path="/ps-calendar-2/:year/:month" element={<Calendar />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

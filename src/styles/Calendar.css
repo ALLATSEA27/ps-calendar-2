@@ -12,8 +12,8 @@
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(7, 1fr); /* 7 days of the week */
+  gap: 4px; /* Reduced gap between cells for a tighter grid */
   text-align: center;
 }
 
@@ -21,7 +21,8 @@
   border: 1px solid #ddd;
   position: relative;
   background-color: #f9f9f9;
-  height: 200px;
+  width: 200px; /* Set both width and */
+  height: 200px; /* height to 120px for a square cell */
 }
 
 .day-cell span {
@@ -34,17 +35,21 @@
 .event {
   background-size: cover;
   background-position: center;
-  position: relative;
-  min-width: 200px;
-  min-height: 200px;
+  position: absolute; /* Position absolute to overlay on the day cell */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .event div {
   padding: 4px;
   font-size: 0.8rem;
 }
+
 .dateNumber {
   position: absolute;
   top: 5px;
