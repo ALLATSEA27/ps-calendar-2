@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 
 const repoName = "ps-calendar-2";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   server: {
     port: 3000,
