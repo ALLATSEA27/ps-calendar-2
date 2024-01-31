@@ -1,104 +1,126 @@
-import { useState, useEffect, CSSProperties } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
-  isValid,
-} from "date-fns";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import CalendarGrid from "./CalendarGrid";
+import { format, addMonths } from "date-fns";
 import { fetchDataEvents } from "../services/FetchDataEvents";
-import { dataEvents } from "../services/Types/DataEvents";
 import "../styles/Calendar.css";
+import { dataEvents } from "../services/Types/DataEvents";
 
-const Calendar = () => {
-  const params = useParams<{ year?: string; month?: string }>(); // Specify types for URL parameters
+const Calendar: React.FC = () => {
+  const params = useParams<{ year?: string; month?: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [events, setEvents] = useState<dataEvents[]>([]);
-  const [days, setDays] = useState<Date[]>([]);
+  const [dataEvents, setDataEvents] = useState<dataEvents[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const year = params.year
-    ? parseInt(params.year, 10)
-    : new Date().getFullYear();
-  const month = params.month
-    ? parseInt(params.month, 10) - 1
-    : new Date().getMonth(); // month is 0-indexed
+  const parseYear = (yearParam?: string) => {
+    const parsedYear = parseInt(yearParam || `${new Date().getFullYear()}`, 10);
+    const currentYear = new Date().getFullYear();
+    return isNaN(parsedYear) || parsedYear < 2000 || parsedYear > currentYear
+      ? currentYear
+      : parsedYear;
+  };
+
+  const parseMonth = (monthParam?: string) => {
+    const parsedMonth =
+      parseInt(monthParam || `${new Date().getMonth() + 1}`, 10) - 1;
+    return isNaN(parsedMonth) || parsedMonth < 0 || parsedMonth > 11
+      ? new Date().getMonth()
+      : parsedMonth;
+  };
+
+  const year = parseYear(params.year);
+  const month = parseMonth(params.month);
+  const currentDate = new Date(year, month);
+
+  const validateDate = (year: number, month: number) => {
+    const currentYear = new Date().getFullYear();
+    const isValidYear = year >= 2000 && year <= currentYear;
+    const isValidMonth = month >= 1 && month <= 12;
+    return isValidYear && isValidMonth;
+  };
 
   useEffect(() => {
-    // Function to parse query parameters
-    const parseQuery = (query: string): Record<string, string> => {
-      return query
-        .replace("?", "")
-        .split("&")
-        .reduce(
-          (params, param) => {
-            const [key, value] = param.split("=");
-            params[key] = value;
-            return params;
-          },
-          {} as Record<string, string>
-        );
-    };
+    let year = params.year
+      ? parseInt(params.year, 10)
+      : new Date().getFullYear();
+    let month = params.month
+      ? parseInt(params.month, 10) - 1
+      : new Date().getMonth();
 
-    // Check for a redirect path in the query parameters
-    const queryParams = parseQuery(location.search);
-    if (queryParams.path) {
-      navigate(`/${queryParams.path}`);
-    } else if (!isValidDate(year, month + 1)) {
-      navigate(`/${format(new Date(), "yyyy/MM")}`);
+    if (!validateDate(year, month + 1)) {
+      // Adjust month for zero-based index
+      const currentDate = new Date();
+      year = currentDate.getFullYear();
+      month = currentDate.getMonth();
+      navigate(`/${year}/${month + 1}`);
     } else {
-      const startDate = startOfMonth(new Date(year, month));
-      const endDate = endOfMonth(new Date(year, month));
-      const interval = eachDayOfInterval({ start: startDate, end: endDate });
-      setDays(interval);
-
-      fetchDataEvents().then((eventsData) => {
-        const eventsInMonth = eventsData.filter((event) => {
-          const eventDate = new Date(event.launchDate);
-          return eventDate >= startDate && eventDate <= endDate;
-        });
-        setEvents(eventsInMonth);
-      });
+      const fetchNewData = async () => {
+        const newData = await fetchDataEvents();
+        setDataEvents(newData);
+        setIsLoading(false);
+      };
+      fetchNewData();
     }
-  }, [year, month, navigate, location.search]);
+  }, [params.year, params.month, navigate]);
 
-  const isValidDate = (year: number, month: number): boolean => {
-    const date = new Date(year, month - 1);
-    return isValid(date) && month >= 1 && month <= 12;
+  const handlePrevMonth = () => {
+    const newDate = addMonths(currentDate, -1);
+    navigate(`/${newDate.getFullYear()}/${newDate.getMonth() + 1}`);
   };
 
-  const renderDay = (day: Date): JSX.Element => {
-    const formattedDay = format(day, "yyyy-MM-dd");
-    const dayEvents = events.filter(
-      (event) =>
-        format(new Date(event.launchDate), "yyyy-MM-dd") === formattedDay
-    );
+  const handleNextMonth = () => {
+    const newDate = addMonths(currentDate, 1);
+    navigate(`/${newDate.getFullYear()}/${newDate.getMonth() + 1}`);
+  };
 
+  if (isLoading) {
     return (
-      <div key={formattedDay} className="day-cell">
-        <span>{format(day, "d")}</span>
-        {dayEvents.map((dataEvent) => {
-          const { id, imageFilenameThumb } = dataEvent;
-          const imagePath = `/images/${imageFilenameThumb}.webp`;
-          const backgroundImageStyle: CSSProperties = {
-            backgroundImage: `url('${imagePath}')`,
-          };
-
-          return (
-            <div key={id} className="event" style={backgroundImageStyle} />
-          );
-        })}
+      <div className="loadingScreen">
+        <img className="loadingImage" src="/images/playstation.png" alt="" />
       </div>
     );
-  };
+  }
 
   return (
-    <div className="calendar-container">
-      <h1 className="calendar-header">
-        {format(new Date(year, month), "MMMM yyyy")}
-      </h1>
-      <div className="grid-container">{days.map((day) => renderDay(day))}</div>
+    <div className="container">
+      <div className="monthHeader">
+        <div className="navButtonContainer">
+          <button onClick={handlePrevMonth} className="navButton">
+            {"<"}
+          </button>
+        </div>
+        <div className="titleContainer">
+          <h1 className="title">{format(currentDate, "MMMM yyyy")}</h1>
+        </div>
+        <div className="navButtonContainer">
+          <button onClick={handleNextMonth} className="navButton">
+            {">"}
+          </button>
+        </div>
+      </div>
+      <div className="calendar">
+        <div className="calendarHeader">
+          {[
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ].map((day) => (
+            <div key={day} className="dayOfWeek">
+              {day}
+            </div>
+          ))}
+        </div>
+        <CalendarGrid
+          year={currentDate.getFullYear()}
+          month={currentDate.getMonth()}
+          dataEvents={dataEvents}
+          isLoading={isLoading}
+        />
+      </div>
     </div>
   );
 };

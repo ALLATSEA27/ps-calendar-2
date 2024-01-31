@@ -1,56 +1,175 @@
-.calendar-container {
-  min-width: 90vw;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-.calendar-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 days of the week */
-  gap: 8px; /* Reduced gap between cells for a tighter grid */
-  text-align: center;
-}
-
-.day-cell {
-  border: 1px solid #ddd;
-  position: relative;
-  background-color: #f9f9f9;
-  height: 120px; /* height to 120px for a square cell */
-}
-
-.day-cell span {
-  font-weight: bold;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-}
-
-.event {
-  background-size: cover;
-  background-position: center;
-  position: absolute; /* Position absolute to overlay on the day cell */
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.container {
+  min-height: 100vh;
+  padding: 0 0.5rem;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.event div {
-  padding: 4px;
-  font-size: 0.8rem;
+.monthHeader {
+  display: flex;
+  align-items: center;
+  padding-bottom: 30px;
+  border-bottom: 2px solid #000;
+  width: 90vw;
+}
+
+.navButtonContainer {
+  flex: 0;
+}
+
+.titleContainer {
+  flex: 1;
+  text-align: center;
+}
+
+.navButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+}
+.calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calendarHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  width: 90vw;
+  margin-bottom: 1rem;
+}
+
+.dayOfWeek {
+  text-align: center;
+  font-weight: bold;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  width: 100%;
+}
+
+.day {
+  position: relative;
+  min-width: 100px;
+  min-height: 100px;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dateNumber {
   position: absolute;
   top: 5px;
   right: 5px;
+}
+
+.highlightedDateNumber {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #006fcd;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+.event {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  min-width: 100px;
+  min-height: 100px;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popupOverlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  height: 20vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 11;
+}
+
+.popup {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: left;
+  color: #fff;
+}
+
+.loadingScreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.loadingImage {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.learnMoreButton {
+  background-color: #006fcd;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 16px;
+}
+.buyNowButton {
+  background-color: #d53b00;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 16px;
+}
+.closeButton {
+  background-color: #fff;
+  border: none;
+  color: #006fcd;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 16px;
 }
