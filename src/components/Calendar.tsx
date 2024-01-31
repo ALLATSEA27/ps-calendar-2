@@ -26,7 +26,7 @@ const Calendar = () => {
 
   useEffect(() => {
     if (!isValidDate(year, month + 1)) {
-      navigate(`/ps-calendar-2/${format(new Date(), "yyyy/MM")}`);
+      navigate(`/${format(new Date(), "yyyy/MM")}`);
     } else {
       const startDate = startOfMonth(new Date(year, month));
       const endDate = endOfMonth(new Date(year, month));
