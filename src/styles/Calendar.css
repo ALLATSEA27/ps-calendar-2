@@ -13,7 +13,7 @@
 .grid-container {
   display: grid;
   grid-template-columns: repeat(7, 1fr); /* 7 days of the week */
-  gap: 4px; /* Reduced gap between cells for a tighter grid */
+  gap: 8px; /* Reduced gap between cells for a tighter grid */
   text-align: center;
 }
 
@@ -21,8 +21,7 @@
   border: 1px solid #ddd;
   position: relative;
   background-color: #f9f9f9;
-  width: 200px; /* Set both width and */
-  height: 200px; /* height to 120px for a square cell */
+  height: 120px; /* height to 120px for a square cell */
 }
 
 .day-cell span {
