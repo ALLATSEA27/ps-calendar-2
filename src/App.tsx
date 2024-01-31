@@ -10,10 +10,12 @@ import NotFound from "./components/NotFound";
 
 const App = () => {
   const currentYear = new Date().getFullYear();
-  const currentMonth = format(new Date(), "MM"); // Ensure you have the 'format' function from 'date-fns'
-
+  const currentMonth = format(new Date(), "MM");
+  const isGitHubPages = window.location.hostname.includes("github.io");
+  const repoName = "ps-calendar-2";
+  const basename = isGitHubPages ? `/${repoName}` : "";
   return (
-    <Router>
+    <Router basename={basename}>
       <Routes>
         <Route
           path="/"
