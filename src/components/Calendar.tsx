@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, CSSProperties } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   format,
@@ -9,6 +9,7 @@ import {
 } from "date-fns";
 import { fetchDataEvents } from "../services/FetchDataEvents";
 import { dataEvents } from "../services/Types/DataEvents";
+import "../styles/Calendar.css";
 
 const Calendar = () => {
   const params = useParams();
@@ -21,7 +22,7 @@ const Calendar = () => {
     : new Date().getFullYear();
   const month = params.month
     ? parseInt(params.month, 10) - 1
-    : new Date().getMonth(); // month is 0-indexed in JavaScript Date
+    : new Date().getMonth();
 
   useEffect(() => {
     if (!isValidDate(year, month + 1)) {
@@ -57,20 +58,26 @@ const Calendar = () => {
     return (
       <div key={formattedDay} className="day-cell">
         <span>{format(day, "d")}</span>
-        {dayEvents.map((event) => (
-          <div key={event.id} className="event">
-            <img src={event.imageFilenameThumb} alt={event.title} />
-            <div>{event.title}</div>
-            {/* Add more event details here */}
-          </div>
-        ))}
+        {dayEvents.map((dataEvent) => {
+          const { id, imageFilenameThumb } = dataEvent;
+          const imagePath = `/images/${imageFilenameThumb}.webp`;
+          const backgroundImageStyle: CSSProperties = {
+            backgroundImage: `url('${imagePath}')`,
+          };
+
+          return (
+            <div key={id} className="event" style={backgroundImageStyle} />
+          );
+        })}
       </div>
     );
   };
 
   return (
-    <div>
-      <h1>Calendar for {format(new Date(year, month), "yyyy-MM")}</h1>
+    <div className="calendar-container">
+      <h1 className="calendar-header">
+        {format(new Date(year, month), "MMMM yyyy")}
+      </h1>
       <div className="grid-container">{days.map((day) => renderDay(day))}</div>
     </div>
   );
